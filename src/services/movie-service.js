@@ -1,0 +1,34 @@
+class MovieService {
+	//  mendan keyin pragramizgasignal qoldiramiz _apiBase _ ogohlantirish oylab ozgartirgin deymiz
+	_apiBase = 'https://api.themoviedb.org/3'
+	_apiKey = 'api_key=9d4711400aef902f165781879f7edc2a'
+	_apiImg = 'https://image.tmdb.org/t/p/original'
+
+	getRecource = async url => {
+		const response = await fetch(url)
+
+		if (!response.ok) {
+			throw new Error(`Could not fetch${url},status:${response.status}`)
+		}
+		return await response.json()
+	}
+	getPopularMovies = async () => {
+		return this.getRecource(
+			`${this._apiBase}/movie/popular?language=en-US&${this._apiKey}`
+		)
+	}
+
+	getTrandingMovies = async () => {
+		return this.getRecource(
+			`${this._apiBase}/movie/top_rated?language=en-US&${this._apiKey}`
+		)
+	}
+
+	getDetailedMovie = async id => {
+		return this.getRecource(
+			`${this._apiBase}/movie/${id}?language=en-US&${this._apiKey}`
+		)
+	}
+}
+
+export default MovieService
