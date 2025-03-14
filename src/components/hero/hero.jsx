@@ -1,16 +1,16 @@
 import { Component } from 'react'
 import './hero.scss'
 import MovieService from '../../services/movie-service'
+import Spinner from '../spinner/spinner'
+import Error from '../error/error'
 
 class Hero extends Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			name: null,
-			description: null,
-			thumbnail: null,
-			backdrop_path: null,
-			id: null,
+			movie: {},
+			loading: true,
+			error: false,
 		}
 		this.movieService = new MovieService()
 		this.getMovie()
@@ -38,11 +38,19 @@ class Hero extends Component {
 		// 	// })
 
 		// })
-		this.movieService.getRandomMovie().then(res => this.setState(res))
+		this.movieService
+			.getRandomMovie()
+			.then(res => this.setState({ movie: res }))
+			.catch(() => this.setState({ error: true }))
+			.finally(() => this.setState({ loading: false }))
 	}
 
 	render() {
-		const { name, description, backdrop_path } = this.state
+		const { movie, loading, error } = this.state
+		const errorContent = error ? <Error /> : null
+		const loadingContent = loading ? <Spinner /> : null
+		const content = !(error || loading) ? <Content movie={movie} /> : null
+
 		return (
 			<div className='app__hero'>
 				<div className='app__hero-info'>
@@ -58,23 +66,9 @@ class Hero extends Component {
 					<button className='btn btn__primary'>DETAILS</button>
 				</div>
 				<div className='app__hero-moive'>
-					<img src={backdrop_path} alt='img' />
-					<div className='app__hero-moive__descr'>
-						<h2>{name}</h2>
-						<p>
-							{description && description.length > 100
-								? `${description.slice(0, 100)}...`
-								: description}
-						</p>
-						<div>
-							<button className='btn btn__secondary'>
-								RANDOM MOVIE
-							</button>
-							<button className='btn btn__primary'>
-								DETAILS
-							</button>
-						</div>
-					</div>
+					{errorContent}
+					{loadingContent}
+					{content}
 				</div>
 			</div>
 		)
@@ -82,3 +76,23 @@ class Hero extends Component {
 }
 
 export default Hero
+
+const Content = ({ movie }) => {
+	return (
+		<>
+			<img src={movie.backdrop_path} alt='img' />
+			<div className='app__hero-moive__descr'>
+				<h2>{movie.name}</h2>
+				<p>
+					{movie.description && movie.description.length > 200
+						? `${movie.description.slice(0, 200)}...`
+						: movie.description}
+				</p>
+				<div>
+					<button className='btn btn__secondary'>RANDOM MOVIE</button>
+					<button className='btn btn__primary'>DETAILS</button>
+				</div>
+			</div>
+		</>
+	)
+}
