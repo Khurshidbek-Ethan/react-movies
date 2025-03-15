@@ -13,7 +13,10 @@ class Hero extends Component {
 			error: false,
 		}
 		this.movieService = new MovieService()
+	}
+	componentDidMount() {
 		this.getMovie()
+		// console.log('componentDidMount')
 	}
 
 	getMovie = () => {

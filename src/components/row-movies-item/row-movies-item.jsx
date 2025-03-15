@@ -3,15 +3,20 @@ import './row-movies-item.scss'
 const RowMoviesItem = ({ movie, onToggleOpen }) => {
 	return (
 		<div className='movieitem' onClick={onToggleOpen}>
-			<img src={movie.image} alt={movie.title} />
+			<img src={movie.backdrop_path} alt={movie.title} />
+
 			<h2>
-				{movie.title}
-				{movie.index + 1}
+				{movie.name.length > 18
+					? `${movie.name.slice(0, 18)}...`
+					: movie.name}
 			</h2>
+
 			<div className='movieitem-descr'>
-				<p>{movie.date}</p>
+				<img src='/date.svg' alt='' />
+				<p>{movie.release_date}</p>
 				<div className='dot' />
-				<p>{movie.duration}</p>
+				<p>{movie.vote_average.toFixed(1)}</p>
+				<img src='/star.svg' alt='' />
 			</div>
 		</div>
 	)
