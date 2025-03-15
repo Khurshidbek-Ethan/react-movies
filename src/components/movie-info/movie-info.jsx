@@ -1,21 +1,66 @@
+import { Component } from 'react'
 import './movie-info.scss'
+import MovieService from '../../services/movie-service'
+import Error from '../error/error'
+import Spinner from '../spinner/spinner'
 
-const MovieInfo = () => {
-	return (
-		<div className='movieinfo'>
-			<img src='/image1.svg' alt='movie' />
-			<div className='movieinfo-descr'>
-				<h1>Movie Title</h1>
-				<p>
-					Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-					Libero aliquam, fugiat amet assumenda distinctio beatae in
-					consectetur reiciendis numquam earum enim, asperiores
-					exercitationem hic delectus. Qui facere enim molestias
-					repellat.
-				</p>
+class MovieInfo extends Component {
+	state = {
+		movie: null,
+		loading: true,
+		error: false,
+	}
+
+	movieService = new MovieService()
+
+	componentDidMount() {
+		this.updateMovie()
+	}
+
+	updateMovie = () => {
+		const { movieId } = this.props
+		if (!movieId) {
+			// return this.setState({ error: true })
+		}
+		this.movieService
+			.getDetailedMovie(movieId)
+			.then(res => this.setState({ movie: res }))
+			.catch(() => this.setState({ error: true }))
+			.finally(() => this.setState({ loading: false }))
+	}
+
+	render() {
+		const { movie, loading, error } = this.state
+		const errorContent = error ? <Error /> : null
+		const loadingContent = loading ? <Spinner /> : null
+		const content = !(error || loading) ? <Content movie={movie} /> : null
+		return (
+			<div className='movieinfo'>
+				{errorContent}
+				{loadingContent}
+				{content}
 			</div>
-		</div>
-	)
+		)
+	}
 }
 
 export default MovieInfo
+
+const Content = ({ movie }) => {
+	return (
+		<>
+			<img src={movie.backdrop_path} alt='img' />
+			<div className='movieinfo__descr'>
+				<h2>{movie.name}</h2>
+				<p>{movie.description}</p>
+				<div className='movieinfo__descr-item'>
+					<img src='/date.svg' alt='' />
+					<p>{movie.release_date}</p>
+					<div className='dot' />
+					<p>{movie.vote_average.toFixed(1)}</p>
+					<img src='/star.svg' alt='' />
+				</div>
+			</div>
+		</>
+	)
+}

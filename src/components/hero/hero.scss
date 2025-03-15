@@ -40,6 +40,10 @@
 			button {
 				width: fit-content;
 			}
+			div {
+				display: flex;
+				gap: 10px;
+			}
 		}
 
 		&-moive {
@@ -56,23 +60,18 @@
 				border-top-left-radius: 5px;
 			}
 
-			&__descr {
+			&-descr {
 				padding: 10px 20px;
+				display: flex;
+				flex-direction: column;
+				gap: 10px;
 
 				h2 {
-					font-size: 24px;
+					font-size: 26px;
 				}
 
 				p {
 					opacity: 0.7;
-					margin-top: 10px;
-					line-height: normal;
-				}
-
-				div {
-					display: grid;
-					grid-template-columns: 1fr 1fr;
-					gap: 10px;
 				}
 			}
 		}

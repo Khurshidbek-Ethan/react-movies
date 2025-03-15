@@ -10,23 +10,26 @@ import Error from '../error/error.jsx'
 import Spinner from '../spinner/spinner.jsx'
 
 class RowMovies extends Component {
-	constructor(props) {
-		super(props)
-		this.state = {
-			open: false,
-			movies: [],
-			loading: true,
-			error: false,
-		}
-		this.movieService = new MovieService()
+	state = {
+		open: false,
+		movies: [],
+		loading: true,
+		error: false,
+		movieId: null,
 	}
+	movieService = new MovieService()
+
 	componentDidMount() {
 		this.getTrendingMovies()
 	}
 
-	onToggleOpen = () => {
-		this.setState(({ open }) => ({ open: !open }))
-	}
+	onClose = () => this.setState({ open: false })
+	onOpen = id => this.setState({ open: true, movieId: id })
+
+	// 1 variyati
+	// onToggleOpen = () => {
+	// 	this.setState(({ open }) => ({ open: !open }))
+	// }
 
 	getTrendingMovies = () => {
 		this.movieService
@@ -39,12 +42,12 @@ class RowMovies extends Component {
 	}
 
 	render() {
-		const { open, movies, error, loading } = this.state
+		const { open, movies, error, loading, movieId } = this.state
 		const errData = error ? <Error /> : null
 		const loadinfData = loading ? <Spinner /> : null
-		const contentData = !(error || loading) ? 
-			<ContentData movies={movies} onToggleOpen={this.onToggleOpen} />
-		 : null
+		const contentData = !(error || loading) ? (
+			<ContentData movies={movies} onOpen={this.onOpen} />
+		) : null
 
 		return (
 			<div className='app__rowmovie'>
@@ -57,13 +60,13 @@ class RowMovies extends Component {
 					<a href='#'>See more</a>
 				</div>
 				<div className='app__rowmovie-lists'>
-				{errData}
-				{loadinfData}
-				{contentData}
+					{errData}
+					{loadinfData}
+					{contentData}
 				</div>
-				
-				<Modal open={open} onClose={this.onToggleOpen}>
-					<MovieInfo />
+
+				<Modal open={open} onClose={this.onClose}>
+					<MovieInfo movieId={movieId} />
 				</Modal>
 			</div>
 		)
@@ -72,16 +75,12 @@ class RowMovies extends Component {
 
 export default RowMovies
 
-const ContentData = ({ movies, onToggleOpen }) => {
+const ContentData = ({ movies, onOpen }) => {
 	return (
 		<>
-					{movies.map((movie) => (
-						<RowMoviesItem 
-							key={movie.id} 
-							movie={movie} 
-							onToggleOpen={onToggleOpen}
-						/>
-					))}
+			{movies.map(movie => (
+				<RowMoviesItem key={movie.id} movie={movie} onOpen={onOpen} />
+			))}
 		</>
 	)
 }

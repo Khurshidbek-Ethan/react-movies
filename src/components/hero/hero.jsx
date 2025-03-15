@@ -15,11 +15,11 @@ class Hero extends Component {
 		this.movieService = new MovieService()
 	}
 	componentDidMount() {
-		this.getMovie()
+		this.updateMovie()
 		// console.log('componentDidMount')
 	}
 
-	getMovie = () => {
+	updateMovie = () => {
 		// this.movieService.getPopularMovies().then(res => {
 		// 	// console.log(res.results)
 		// 	//arraylarni ichidan defaultni olvolishimiz  kerak
@@ -41,6 +41,8 @@ class Hero extends Component {
 		// 	// })
 
 		// })
+
+		this.setState({ laoding: true })
 		this.movieService
 			.getRandomMovie()
 			.then(res => this.setState({ movie: res }))
@@ -66,7 +68,15 @@ class Hero extends Component {
 						saepe autem facilis! Laudantium consequatur accusantium
 						mollitia.
 					</p>
-					<button className='btn btn__primary'>DETAILS</button>
+					<div>
+						<button className='btn btn__primary'>DETAILS</button>
+						<button
+							className='btn btn__secondary'
+							onClick={this.updateMovie}
+						>
+							Random Movie
+						</button>
+					</div>
 				</div>
 				<div className='app__hero-moive'>
 					{errorContent}
@@ -84,17 +94,14 @@ const Content = ({ movie }) => {
 	return (
 		<>
 			<img src={movie.backdrop_path} alt='img' />
-			<div className='app__hero-moive__descr'>
+			<div className='app__hero-moive-descr'>
 				<h2>{movie.name}</h2>
 				<p>
 					{movie.description && movie.description.length > 200
 						? `${movie.description.slice(0, 200)}...`
 						: movie.description}
 				</p>
-				<div>
-					<button className='btn btn__secondary'>RANDOM MOVIE</button>
-					<button className='btn btn__primary'>DETAILS</button>
-				</div>
+				<button className='btn btn__primary'>DETAILS</button>
 			</div>
 		</>
 	)
