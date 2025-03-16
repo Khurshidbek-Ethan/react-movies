@@ -1,11 +1,14 @@
 import './spinner.scss'
+import PropTypes from 'prop-types'; 
 
-const Spinner = () => {
+const Spinner = ({width="50px"}) => {
 	return (
 		<div className='center'>
-			<div className='loader' />
+			<div className='loader' style={{width}} />
 		</div>
 	)
 }
-
+Spinner.PropTypes = {
+	with:PropTypes.number
+}
 export default Spinner

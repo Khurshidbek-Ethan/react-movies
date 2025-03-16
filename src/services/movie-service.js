@@ -1,8 +1,10 @@
 class MovieService {
 	//  mendan keyin pragramizgasignal qoldiramiz _apiBase _ ogohlantirish oylab ozgartirgin deymiz
 	_apiBase = 'https://api.themoviedb.org/3'
+	_apiLng = "language=en-US"
 	_apiKey = 'api_key=9d4711400aef902f165781879f7edc2a'
 	_apiImg = 'https://image.tmdb.org/t/p/original'
+	_apiPage = 1
 
 	getRecource = async url => {
 		const response = await fetch(url)
@@ -14,23 +16,23 @@ class MovieService {
 	}
 	getPopularMovies = async () => {
 		return this.getRecource(
-			`${this._apiBase}/movie/popular?language=en-US&${this._apiKey}`
+			`${this._apiBase}/movie/popular?${this._apiLng}&${this._apiKey}`
 		)
 	}
 
-	getTrandingMovies = async () => {
+	getTrandingMovies = async (page = this._apiPage) => {
 		const response = await this.getRecource(
-			`${this._apiBase}/movie/top_rated?language=en-US&${this._apiKey}`
+			`${this._apiBase}/movie/top_rated?${this._apiLng}&${page}&${this._apiKey}`
 		)
 		const movies = response.results
-		console.log(movies)
+		// console.log(movies)
 
 		return movies && movies.map(movie => this._transformMovie(movie))
 	}
 
 	getDetailedMovie = async id => {
 		const movie = await this.getRecource(
-			`${this._apiBase}/movie/${id}?language=en-US&${this._apiKey}`
+			`${this._apiBase}/movie/${id}?${this._apiLng}&${this._apiKey}`
 		)
 		return this._transformMovie(movie)
 	}

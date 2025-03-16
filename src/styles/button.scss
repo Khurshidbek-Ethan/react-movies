@@ -11,7 +11,7 @@
 	font-size: 17px;
 	padding: 12px 24px;
 
-	&__primary {
+	&-primary {
 		background-color: transparent;
 		color: #fff;
 		border: 1px solid #fff;
@@ -22,14 +22,18 @@
 		}
 	}
 
-	&__secondary {
+	&-secondary {
 		background-color: #fff;
 		border: 1px solid #fff;
 
 		&:hover {
-			color: #fff;
+			color: #1c1b1b;
 			background-color: transparent;
 			border-color: rgba(255, 255, 255, 0.1);
+		}
+		&:disabled {
+			cursor: not-allowed;
+			opacity: 0.5;
 		}
 	}
 }

@@ -3,11 +3,12 @@ import './movie-info.scss'
 import MovieService from '../../services/movie-service'
 import Error from '../error/error'
 import Spinner from '../spinner/spinner'
+import PropTypes from 'prop-types';
 
 class MovieInfo extends Component {
 	state = {
 		movie: null,
-		loading: true,
+		loading: false,
 		error: false,
 	}
 
@@ -17,11 +18,20 @@ class MovieInfo extends Component {
 		this.updateMovie()
 	}
 
+	componentDidUpdate(prevProps) {
+		if (this.props.movieId !== prevProps.movieId) {
+			this.updateMovie()
+		}
+	}
+
 	updateMovie = () => {
 		const { movieId } = this.props
 		if (!movieId) {
-			// return this.setState({ error: true })
+			return
 		}
+
+		this.setState({ loading: true })
+
 		this.movieService
 			.getDetailedMovie(movieId)
 			.then(res => this.setState({ movie: res }))
@@ -31,11 +41,16 @@ class MovieInfo extends Component {
 
 	render() {
 		const { movie, loading, error } = this.state
+
+		const initialContent = movie || loading || error ? null : <Spinner />
 		const errorContent = error ? <Error /> : null
 		const loadingContent = loading ? <Spinner /> : null
-		const content = !(error || loading) ? <Content movie={movie} /> : null
+		const content = !(error || loading || !movie) ? 
+			<Content movie={movie} />
+		 : null
 		return (
 			<div className='movieinfo'>
+				{initialContent}
 				{errorContent}
 				{loadingContent}
 				{content}
@@ -43,13 +58,16 @@ class MovieInfo extends Component {
 		)
 	}
 }
-
+MovieInfo.prevProps = {
+	movieId:PropTypes.number
+}
 export default MovieInfo
 
 const Content = ({ movie }) => {
 	return (
 		<>
 			<img src={movie.backdrop_path} alt='img' />
+			
 			<div className='movieinfo__descr'>
 				<h2>{movie.name}</h2>
 				<p>{movie.description}</p>
@@ -63,4 +81,8 @@ const Content = ({ movie }) => {
 			</div>
 		</>
 	)
+}
+
+Content.prototypes = {
+	movie:PropTypes.object
 }
