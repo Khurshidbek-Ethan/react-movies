@@ -1,65 +1,56 @@
-import { Component } from 'react'
+import { useState, useEffect } from 'react'
 import './movie-info.scss'
 import MovieService from '../../services/movie-service'
 import Error from '../error/error'
 import Spinner from '../spinner/spinner'
-import PropTypes from 'prop-types';
+import PropTypes from 'prop-types'
 
-class MovieInfo extends Component {
-	state = {
-		movie: null,
-		loading: false,
-		error: false,
-	}
+const MovieInfo = ({ movieId }) => {
+	const [movie, setMovie] = useState(null)
+	const [loading, setLoading] = useState(false)
+	const [error, setError] = useState(false)
 
-	movieService = new MovieService()
+	const movieService = new MovieService()
 
-	componentDidMount() {
-		this.updateMovie()
-	}
+	useEffect(() => {
+		updateMovie()
+	}, [movieId])
 
-	componentDidUpdate(prevProps) {
-		if (this.props.movieId !== prevProps.movieId) {
-			this.updateMovie()
-		}
-	}
 
-	updateMovie = () => {
-		const { movieId } = this.props
+	
+	const updateMovie = () => {
 		if (!movieId) {
 			return
 		}
-
-		this.setState({ loading: true })
-
-		this.movieService
+		setLoading(true)
+		
+		movieService
 			.getDetailedMovie(movieId)
-			.then(res => this.setState({ movie: res }))
-			.catch(() => this.setState({ error: true }))
-			.finally(() => this.setState({ loading: false }))
+			.then(res => setMovie(res))
+			.catch(() => setError(true))
+			.finally(() => setLoading(false))
 	}
 
-	render() {
-		const { movie, loading, error } = this.state
 
-		const initialContent = movie || loading || error ? null : <Spinner />
-		const errorContent = error ? <Error /> : null
-		const loadingContent = loading ? <Spinner /> : null
-		const content = !(error || loading || !movie) ? 
-			<Content movie={movie} />
-		 : null
-		return (
-			<div className='movieinfo'>
-				{initialContent}
-				{errorContent}
-				{loadingContent}
-				{content}
-			</div>
-		)
-	}
+	const initialContent = movie || loading || error ? null : <Spinner />
+	const errorContent = error ? <Error /> : null
+	const loadingContent = loading ? <Spinner /> : null
+	const content = !(error || loading || !movie) ? 
+		<Content movie={movie} />
+	 : null
+// console.log("content",content);
+
+	return (
+		<div className='movieinfo'>
+			{initialContent}
+			{errorContent}
+			{loadingContent}
+			{content}
+		</div>
+	)
 }
 MovieInfo.prevProps = {
-	movieId:PropTypes.number
+	movieId: PropTypes.number,
 }
 export default MovieInfo
 
@@ -67,7 +58,6 @@ const Content = ({ movie }) => {
 	return (
 		<>
 			<img src={movie.backdrop_path} alt='img' />
-			
 			<div className='movieinfo__descr'>
 				<h2>{movie.name}</h2>
 				<p>{movie.description}</p>
@@ -84,5 +74,5 @@ const Content = ({ movie }) => {
 }
 
 Content.prototypes = {
-	movie:PropTypes.object
+	movie: PropTypes.object,
 }

@@ -1,7 +1,7 @@
 import './row-movies-item.scss'
 import PropTypes from 'prop-types';
 
-const RowMoviesItem = ({movie,onOpen}) => {
+const RowMoviesItem = ({movie ,onOpen}) => {
 	return (
 		<div className='movieitem' onClick={() => onOpen(movie.id)}>
 			<img src={movie.poster_path} alt={movie.title} />
