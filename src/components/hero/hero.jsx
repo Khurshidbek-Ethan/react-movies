@@ -4,31 +4,28 @@ import Error from '../error/error'
 import Spinner from '../spinner/spinner'
 import './hero.scss'
 import PropTypes from 'prop-types'
+import useMovieService from '../../services/movie-service'
+import { useNavigate } from 'react-router-dom'
 
 const Hero = () => {
 	const [movie, setMovie] = useState(null)
-	const [loading, setLoading] = useState(true)
-	const [error, setError] = useState(false)
 
-	const movieService = new MovieService()
+	const { getRandomMovie, error, loading, clearError } = useMovieService()
 
 	useEffect(() => {
 		updateMovie()
 	}, [])
 
 	const updateMovie = () => {
-		setLoading(true)
-
-		movieService
-			.getRandomMovie()
-			.then(res => setMovie(res))
-			.catch(() => setError(true))
-			.finally(() => setLoading(false))
+		clearError()
+		getRandomMovie().then(res => setMovie(res))
 	}
 
 	const errorContent = error ? <Error /> : null
 	const loadingContent = loading ? <Spinner /> : null
-	const content = !(error || loading) ? <Content movie={movie} /> : null
+	const content = !(error || loading || !movie) ? (
+		<Content movie={movie} />
+	) : null
 
 	return (
 		<div className='hero'>
@@ -43,7 +40,7 @@ const Hero = () => {
 					perferendis error earum.
 				</p>
 				<div>
-					<button className='btn btn-primary'>Details</button>
+					{/* <button className='btn btn-primary'>Details</button> */}
 					<button className='btn btn-secondary' onClick={updateMovie}>
 						Random Movie
 					</button>
@@ -61,6 +58,8 @@ const Hero = () => {
 export default Hero
 
 const Content = ({ movie }) => {
+	const navigate = useNavigate()
+
 	return (
 		<>
 			<img src={movie.backdrop_path} alt='img' />
@@ -72,7 +71,12 @@ const Content = ({ movie }) => {
 						? `${movie.description.slice(0, 250)}...`
 						: movie.description}
 				</p>
-				<button className='btn btn-primary'>Details</button>
+				<button
+					className='btn btn-primary'
+					onClick={() => navigate(`/movie/${movie.id}`)}
+				>
+					Details
+				</button>
 			</div>
 		</>
 	)

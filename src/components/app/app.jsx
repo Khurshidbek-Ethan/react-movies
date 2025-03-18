@@ -1,18 +1,21 @@
 import Navbar from '../navbar/navbar'
-import Hero from '../hero/hero'
-import RowMovies from '../row-movies/row-movies'
-import ErrorBoundary from '../error-boundary/error-boundary'
+import { Route, Routes } from 'react-router-dom'
+import HomePage from '../../pages/home-page'
+import TvPage from '../../pages/tv-page'
+import DetailedPage from '../../pages/detailed-page'
+import NotFoundPage from '../../pages/not-found-page'
 const App = () => {
 	return (
 		<div className='app'>
 			<Navbar />
-			<ErrorBoundary>
-			<Hero />
-			</ErrorBoundary>
-			<ErrorBoundary>
-			<RowMovies />
-			</ErrorBoundary>
-
+			<Routes>
+				<Route path='/' element={<HomePage />} />
+				<Route path='/tv' element={<TvPage />} />
+				<Route path='/movie/:movieId' element={<DetailedPage />} />
+				<Route path='/tv' element={<TvPage />} />
+				{/*  pathga * qoyadigon bolsak tepadagi path larga togri kelmasa NotFoundPagega jonatvoradi */}
+				<Route path='*' element={<NotFoundPage />} />
+			</Routes>
 		</div>
 	)
 }

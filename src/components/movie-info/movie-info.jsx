@@ -4,41 +4,32 @@ import MovieService from '../../services/movie-service'
 import Error from '../error/error'
 import Spinner from '../spinner/spinner'
 import PropTypes from 'prop-types'
+import useMovieService from '../../services/movie-service'
+import { useNavigate } from 'react-router-dom'
 
 const MovieInfo = ({ movieId }) => {
 	const [movie, setMovie] = useState(null)
-	const [loading, setLoading] = useState(false)
-	const [error, setError] = useState(false)
 
-	const movieService = new MovieService()
+	const { error, loading, getDetailedMovie } = useMovieService()
 
 	useEffect(() => {
 		updateMovie()
 	}, [movieId])
 
-
-	
 	const updateMovie = () => {
 		if (!movieId) {
 			return
 		}
-		setLoading(true)
-		
-		movieService
-			.getDetailedMovie(movieId)
-			.then(res => setMovie(res))
-			.catch(() => setError(true))
-			.finally(() => setLoading(false))
+		getDetailedMovie(movieId).then(res => setMovie(res))
 	}
-
 
 	const initialContent = movie || loading || error ? null : <Spinner />
 	const errorContent = error ? <Error /> : null
 	const loadingContent = loading ? <Spinner /> : null
-	const content = !(error || loading || !movie) ? 
+	const content = !(error || loading || !movie) ? (
 		<Content movie={movie} />
-	 : null
-// console.log("content",content);
+	) : null
+	// console.log("content",content);
 
 	return (
 		<div className='movieinfo'>
@@ -55,18 +46,29 @@ MovieInfo.prevProps = {
 export default MovieInfo
 
 const Content = ({ movie }) => {
+	const navigate = useNavigate()
 	return (
 		<>
 			<img src={movie.backdrop_path} alt='img' />
 			<div className='movieinfo__descr'>
-				<h2>{movie.name}</h2>
-				<p>{movie.description}</p>
-				<div className='movieinfo__descr-item'>
-					<img src='/date.svg' alt='' />
-					<p>{movie.release_date}</p>
-					<div className='dot' />
-					<p>{movie.vote_average.toFixed(1)}</p>
-					<img src='/star.svg' alt='' />
+				<div>
+					<h2>{movie.name}</h2>
+					<p>{movie.description}</p>
+					<div className='movieinfo__descr-item'>
+						<img src='/date.svg' alt='' />
+						<p>{movie.release_date}</p>
+						<div className='dot' />
+						<p>{movie.vote_average.toFixed(1)}</p>
+						<img src='/star.svg' alt='' />
+					</div>
+					<div>
+						<button
+							className='btn btn-light'
+							onClick={() => navigate(`/movie/${movie.id}`)}
+						>
+							Details
+						</button>
+					</div>
 				</div>
 			</div>
 		</>

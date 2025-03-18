@@ -1,60 +1,71 @@
-class MovieService {
+import { useHttp } from '../hooks/use-http'
+
+const useMovieService = () => {
+	const { request, loading, error, clearError } = useHttp()
+
 	//  mendan keyin pragramizgasignal qoldiramiz _apiBase _ ogohlantirish oylab ozgartirgin deymiz
-	_apiBase = 'https://api.themoviedb.org/3'
-	_apiLng = "language=en-US"
-	_apiKey = 'api_key=9d4711400aef902f165781879f7edc2a'
-	_apiImg = 'https://image.tmdb.org/t/p/original'
-	_apiPage = 1
+	const _apiBase = 'https://api.themoviedb.org/3',
+		_apiLng = 'language=en-US',
+		_apiKey = 'api_key=9d4711400aef902f165781879f7edc2a',
+		_apiImg = 'https://image.tmdb.org/t/p/original',
+		_apiPage = 1
 
-	getRecource = async url => {
-		const response = await fetch(url)
+	// getRecource = async url => {
+	// 	const response = await fetch(url)
 
-		if (!response.ok) {
-			throw new Error(`Could not fetch${url},status:${response.status}`)
-		}
-		return await response.json()
+	// 	if (!response.ok) {
+	// 		throw new Error(`Could not fetch${url},status:${response.status}`)
+	// 	}
+	// 	return await response.json()
+	// }
+
+	const getPopularMovies = async () => {
+		return await request(`${_apiBase}/movie/popular?${_apiLng}&${_apiKey}`)
 	}
-	getPopularMovies = async () => {
-		return this.getRecource(
-			`${this._apiBase}/movie/popular?${this._apiLng}&${this._apiKey}`
-		)
-	}
 
-	getTrandingMovies = async (page = this._apiPage) => {
-		const response = await this.getRecource(
-			`${this._apiBase}/movie/top_rated?${this._apiLng}&${page}&${this._apiKey}`
+	const getTrandingMovies = async (page = _apiPage) => {
+		const response = await request(
+			`${_apiBase}/movie/top_rated?${_apiLng}&${page}&${_apiKey}`
 		)
 		const movies = response.results
 		// console.log(movies)
 
-		return movies && movies.map(movie => this._transformMovie(movie))
+		return movies && movies.map(movie => _transformMovie(movie))
 	}
 
-	getDetailedMovie = async id => {
-		const movie = await this.getRecource(
-			`${this._apiBase}/movie/${id}?${this._apiLng}&${this._apiKey}`
+	const getDetailedMovie = async id => {
+		const movie = await request(
+			`${_apiBase}/movie/${id}?${_apiLng}&${_apiKey}`
 		)
-		return this._transformMovie(movie)
+		return _transformMovie(movie)
 	}
 
-	getRandomMovie = async () => {
-		const res = await this.getPopularMovies()
+	const getRandomMovie = async () => {
+		const res = await getPopularMovies()
 		const movie =
 			res.results[Math.floor(Math.random() * res.results.length)]
-		return this._transformMovie(movie)
+		return _transformMovie(movie)
 	}
 
-	_transformMovie = movie => {
+	const _transformMovie = movie => {
 		return {
 			name: movie.original_title,
 			description: movie.overview,
-			backdrop_path: `${this._apiImg}${movie.backdrop_path}`,
-			poster_path: `${this._apiImg}${movie.poster_path}`,
+			backdrop_path: `${_apiImg}${movie.backdrop_path}`,
+			poster_path: `${_apiImg}${movie.poster_path}`,
 			id: movie.id,
 			release_date: movie.release_date,
 			vote_average: movie.vote_average,
 		}
 	}
+	return {
+		getTrandingMovies,
+		getRandomMovie,
+		getDetailedMovie,
+		loading,
+		error,
+		clearError,
+	}
 }
 
-export default MovieService
+export default useMovieService
