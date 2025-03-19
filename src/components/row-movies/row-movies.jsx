@@ -10,6 +10,7 @@ import Error from '../error/error.jsx'
 import Spinner from '../spinner/spinner.jsx'
 import PropTypes from 'prop-types'
 import useMovieService from '../../services/movie-service.js'
+import { useLocation } from 'react-router-dom'
 
 const RowMovies = () => {
 	const [open, setOpen] = useState(false)
@@ -18,7 +19,11 @@ const RowMovies = () => {
 	const [page, setPage] = useState(2)
 	const [newItemLoading, setNewItemLoading] = useState(false)
 
-	const { error, loading, getTrandingMovies } = useMovieService()
+	const { error, loading, getTrandingMovies, getPopularMovies } =
+		useMovieService()
+
+	const { pathname } = useLocation()
+	console.log(pathname)
 
 	useEffect(() => {
 		getMovies()
@@ -30,10 +35,16 @@ const RowMovies = () => {
 		setOpen(true)
 	}
 
-	const getMovies = (page) => {
-		getTrandingMovies(page)
-			.then(res => setMovies(movies => [...movies, ...res]))
-			.finally(() => setNewItemLoading(false))
+	const getMovies = page => {
+		if (pathname === '/popular') {
+			getPopularMovies(page)
+				.then(res => setMovies(movies => [...movies, ...res]))
+				.finally(() => setNewItemLoading(false))
+		} else {
+			getTrandingMovies(page)
+				.then(res => setMovies(movies => [...movies, ...res]))
+				.finally(() => setNewItemLoading(false))
+		}
 	}
 
 	const getMoreMovies = () => {
@@ -45,16 +56,13 @@ const RowMovies = () => {
 
 	const errData = error ? <Error /> : null
 	const loadinfData = loading ? <Spinner /> : null
-	
 
-
-	
 	return (
 		<div className='rowmovie'>
 			<div className='rowmovie-top'>
 				<div className='rowmovie-top__title'>
 					<img src='/tranding.svg' alt='' />
-					<h1>Trending</h1>
+					<h1>{pathname === '/popular' ? 'Popular' : 'Tranding'}</h1>
 				</div>
 				<div className='hr' />
 				<a href='#'>See more</a>

@@ -3,6 +3,7 @@ import './navbar.scss'
 import logo from '/logo.svg'
 import logoText from '/logo-text.svg'
 import { Link, NavLink } from 'react-router-dom'
+import { navbar_links } from '../../constants'
 const Navbar = () => {
 	return (
 		<div className='navbar'>
@@ -14,19 +15,18 @@ const Navbar = () => {
 			</div>
 			<nav className='navbar__menu'>
 				<ul>
-					<li>
-						<NavLink
-							to={'/'}
-							className={({ isActive }) =>
-								isActive ? 'active' : ''
-							}
-						>
-							Home
-						</NavLink>
-					</li>
-					<li>
-						<NavLink to={'/tv'}>Tv Shows</NavLink>
-					</li>
+					{navbar_links.map(item => (
+						<li key={item.route}>
+							<NavLink
+								to={item.route}
+								className={({ isActive }) =>
+									isActive ? 'active' : ''
+								}
+							>
+								{item.label}
+							</NavLink>
+						</li>
+					))}
 				</ul>
 			</nav>
 		</div>

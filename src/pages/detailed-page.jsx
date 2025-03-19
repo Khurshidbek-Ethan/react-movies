@@ -1,11 +1,7 @@
-import { useParams } from 'react-router-dom'
+import DetailedMovie from '../components/detailed-movie/detailed-movie'
 
 const DetailedPage = () => {
-	// useParamsda objectni olvolamiz bu bizga browserdagi paramsni qolga olib beradi
-	const { movieId } = useParams()
-	console.log(movieId)
-
-	return <div>DetailedPage</div>
+	return <DetailedMovie />
 }
 
 export default DetailedPage
