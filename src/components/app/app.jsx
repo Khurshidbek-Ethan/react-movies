@@ -24,7 +24,6 @@ const App = () => {
 					<Route path='/tranding' element={<TrandingPage />} />
 					<Route path='/popular' element={<PopularPage />} />
 					<Route path='/movie/:movieId' element={<DetailedPage />} />
-					{/* <Route path='/tv' element={<TvPage />} /> */}
 					{/*  pathga * qoyadigon bolsak tepadagi path larga togri kelmasa NotFoundPagega jonatvoradi */}
 					<Route path='*' element={<NotFoundPage />} />
 				</Routes>

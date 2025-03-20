@@ -4,7 +4,7 @@ export const useHttp = () => {
 	const [loading, setLoading] = useState(false)
 	const [error, setError] = useState(false)
 
-	// useCallback  fetchda saqlash un useCallback hookdan foydalanyapmiz
+	//  fetchda saqlash un useCallback hookdan foydalanyapmiz
 	const request = useCallback(
 		async (
 			url,
